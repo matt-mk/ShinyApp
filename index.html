@@ -36,12 +36,15 @@
     <h2>examine the earthquakes dataset included in R</h2>
     <p>M Clifton<br/>Data Scientist</p>
   </hgroup>
+    <a href="https://github.com/matt-mk/ShinyApp/zipball/gh-pages" class="example">
+     Download
+    </a>
   <article></article>  
 </slide>
     
 
     <!-- SLIDES -->
-    <slide class="class" id="id" style="background:;">
+    <slide class="" id="slide-1" style="background:;">
   <hgroup>
     <h2>Earthquake App</h2>
   </hgroup>
@@ -64,6 +67,39 @@
 
 <slide class="" id="slide-2" style="background:;">
   <hgroup>
+    <h2>How it works</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>The code creates reactive expression for the data subsetted to what the user selected</p>
+
+<pre><code class="r">filteredData &lt;- reactive({
+quakes[quakes$mag &gt;= input$range[1] &amp; quakes$mag &lt;= input$range[2],]
+})
+</code></pre>
+
+<p>Using the geo location data the code selects the correct bounds of the map with the Leaflet package</p>
+
+<pre><code class="r">output$map &lt;- renderLeaflet({
+    leaflet(quakes) %&gt;% addTiles() %&gt;% 
+      fitBounds(~min(long), ~min(lat), ~max(long), ~max(lat))
+  })
+</code></pre>
+
+<p>The code plots circles on the map sized and coloured to the magnitude of the quakes</p>
+
+<pre><code class="r">  leafletProxy(&quot;map&quot;, data = filteredData()) %&gt;%
+  clearShapes() %&gt;%
+  addCircles(radius = ~10^mag/10, weight = 1, color = &quot;#777777&quot;,
+  fillColor = ~pal(mag), fillOpacity = 0.7, popup = ~paste(mag)
+  )
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-3" style="background:;">
+  <hgroup>
     <h2>Screen Shot</h2>
   </hgroup>
   <article data-timings="">
@@ -73,7 +109,7 @@
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-3" style="background:;">
+<slide class="" id="slide-4" style="background:;">
   <hgroup>
     <h2>Using the App</h2>
   </hgroup>
@@ -88,7 +124,7 @@
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-4" style="background:;">
+<slide class="" id="slide-5" style="background:;">
   <hgroup>
     <h2>Why is this app interesting?</h2>
   </hgroup>
@@ -116,20 +152,26 @@ Geointelligence is about the integration of both and maps such as these provide 
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=2 title='Screen Shot'>
+        data-slide=2 title='How it works'>
          2
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=3 title='Using the App'>
+        data-slide=3 title='Screen Shot'>
          3
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=4 title='Why is this app interesting?'>
+        data-slide=4 title='Using the App'>
          4
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=5 title='Why is this app interesting?'>
+         5
       </a>
     </li>
   </ul>

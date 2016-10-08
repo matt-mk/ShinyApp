@@ -8,9 +8,13 @@ highlighter : highlight.js  # {highlight.js, prettify, highlight}
 hitheme     : tomorrow      # 
 widgets     : []            # {mathjax, quiz, bootstrap}
 mode        : selfcontained # {standalone, draft}
+github:
+          user: matt-mk
+          repo: ShinyApp
+
 knit        : slidify::knit2slides
 
---- .class #id 
+--- 
 
 ## Earthquake App
 
@@ -20,6 +24,37 @@ knit        : slidify::knit2slides
   + the latitude and longitude of earthquakes around Fiji
   + the magnitude of the earthquakes
   + information pertaining to earthquakes with a magnitude greater than 4
+
+---
+
+## How it works
+
+The code creates reactive expression for the data subsetted to what the user selected
+ 
+``` {r eval=FALSE}  
+filteredData <- reactive({
+quakes[quakes$mag >= input$range[1] & quakes$mag <= input$range[2],]
+})
+```
+
+Using the geo location data the code selects the correct bounds of the map with the Leaflet package
+
+``` {r eval=FALSE}
+output$map <- renderLeaflet({
+    leaflet(quakes) %>% addTiles() %>% 
+      fitBounds(~min(long), ~min(lat), ~max(long), ~max(lat))
+  })
+```
+
+The code plots circles on the map sized and coloured to the magnitude of the quakes
+
+``` {r eval=FALSE}
+  leafletProxy("map", data = filteredData()) %>%
+  clearShapes() %>%
+  addCircles(radius = ~10^mag/10, weight = 1, color = "#777777",
+  fillColor = ~pal(mag), fillOpacity = 0.7, popup = ~paste(mag)
+  )
+```
 
 --- 
 
